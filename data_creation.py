@@ -208,7 +208,18 @@ train_data['ORIGIN_LAT'] = oy
 train_data['DEST_LNG'] = dx
 train_data['DEST_LAT'] = dy
 
+def one_hot(df, column_type):
+    if column_type == 0:
+        column = 'CALL_TYPE'
+    elif column_type == 1:
+        column = 'ACTUAL_DAYTYPE'
+    one_hot = pd.get_dummies(df[column])
+    one_hot = one_hot.rename(columns={"A": column + "_A", "B": column + "_B", "C":column + "_C"})
+    return one_hot
 
-
+one_hot_call_type = one_hot(train_data,0)
+one_hot_day_type  = one_hot(train_data,1)
+train_data = train_data.join(one_hot_call_type)
+train_data = train_data.join(one_hot_day_type)
 
 #print(train_data.head(10))
