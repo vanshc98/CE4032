@@ -2,13 +2,16 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 import pytz
+import ast
+import matplotlib.pyplot as plt
 
 local_tz = pytz.timezone('Portugal')
 test_data = pd.read_csv('datasets/test.csv')
+
 print(test_data.head)
 
 train_data = pd.read_csv('datasets/train with actual day v3.csv')
-# train_data.head()
+
 train_data.groupby('MISSING_DATA').count()
 
 holiday_data = pd.read_csv('datasets/Holidays.csv')
@@ -98,11 +101,10 @@ for index, row in train_data.iterrows():
     if(counter%500==0):
         print(counter/1710670)
 train_data['ACTUAL_DAYTYPE'] = actual_day_type
-train_data.groupby('ACTUAL_DAYTYPE').count()     
+train_data.groupby('ACTUAL_DAYTYPE').count()
 
 #for test data
-import ast
-import matplotlib.pyplot as plt
+
 
 counter = 0
 count_md = test_data['MISSING_DATA'].count()
@@ -114,7 +116,7 @@ for i in range(count_md):
     polyline = ast.literal_eval(test_data['POLYLINE'][i])
     dur = len(polyline)
     trip_duration.append(dur)
-    end_epoch_datestamp = test_data['TIMESTAMP'][i] + dur 
+    end_epoch_datestamp = test_data['TIMESTAMP'][i] + dur
     end_datetime_for_datestamp_in_utc = datetime.utcfromtimestamp(end_epoch_datestamp)
     actual_end_datetime_for_datestamp = end_datetime_for_datestamp_in_utc.replace(tzinfo=pytz.utc).astimezone(local_tz)
     end_time.append(actual_end_datetime_for_datestamp)
@@ -145,7 +147,7 @@ for i in range(count_md):
         polyline = ast.literal_eval(train_data['POLYLINE'][i])
         dur = len(polyline)
         trip_duration.append(dur)
-        end_epoch_datestamp = train_data['TIMESTAMP'][i] + dur 
+        end_epoch_datestamp = train_data['TIMESTAMP'][i] + dur
         end_datetime_for_datestamp_in_utc = datetime.utcfromtimestamp(end_epoch_datestamp)
         actual_end_datetime_for_datestamp = end_datetime_for_datestamp_in_utc.replace(tzinfo=pytz.utc).astimezone(local_tz)
         end_time.append(actual_end_datetime_for_datestamp)
@@ -172,9 +174,41 @@ train_data['DESTINATION'] = dest
 for index, row in train_data.iterrows():
     if(row['MISSING_DATA']== True):
         train_data.drop(index, inplace = True)
-    
+
 train_data.to_csv('datasets/train with duration origin etc v4.csv')
 
 for index, row in train_data.iterrows():
     if(row['DURATION']== "NULL"):
         train_data.drop(index, inplace = True)
+
+## Splitting origin and destination for lat and lng columns
+# For Train Data
+
+ox = []
+oy = []
+dx = []
+dy = []
+
+for i in range(count_md):
+    if train_data['ORIGIN'][i] != "":
+        origin = train_data['ORIGIN'][i]
+        ox.append(origin[0])
+        oy.append(origin[1])
+        dest = train_data['DESTINATION'][i]
+        dx.append(dest[0])
+        dy.append(dest[1])
+    else:
+        ox.append("NULL")
+        oy.append("NULL")
+        dx.append("NULL")
+        dy.append("NULL")
+
+train_data['ORIGIN_LNG'] = ox
+train_data['ORIGIN_LAT'] = oy
+train_data['DEST_LNG'] = dx
+train_data['DEST_LAT'] = dy
+
+
+
+
+#print(train_data.head(10))
