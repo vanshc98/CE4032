@@ -10,3 +10,12 @@ def calHarDist(lat1, lon1, lat2, lon2):  # generally used geo measurement functi
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     d = R * c
     return d * 1000 # meters
+
+def one_hot(df, column_type):
+    if column_type == 0:
+        column = 'CALL_TYPE'
+    elif column_type == 1:
+        column = 'ACTUAL_DAYTYPE'
+    one_hot = pd.get_dummies(df[column])
+    one_hot = one_hot.rename(columns={"A": column + "_A", "B": column + "_B", "C":column + "_C"})
+    return one_hot
