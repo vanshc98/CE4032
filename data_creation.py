@@ -2,13 +2,15 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 import pytz
+import ast
+import matplotlib.pyplot as plt
+from utils import calHarDist
 
 local_tz = pytz.timezone('Portugal')
 test_data = pd.read_csv('datasets/test.csv')
-print(test_data.head)
 
-train_data = pd.read_csv('datasets/train with actual day v3.csv')
-# train_data.head()
+train_data = pd.read_csv('datasets/train.csv')
+train_data.head()
 train_data.groupby('MISSING_DATA').count()
 
 holiday_data = pd.read_csv('datasets/Holidays.csv')
@@ -101,8 +103,6 @@ train_data['ACTUAL_DAYTYPE'] = actual_day_type
 train_data.groupby('ACTUAL_DAYTYPE').count()     
 
 #for test data
-import ast
-import matplotlib.pyplot as plt
 
 counter = 0
 count_md = test_data['MISSING_DATA'].count()
@@ -169,12 +169,86 @@ train_data['END_TIME'] = end_time
 train_data['ORIGIN'] = origin
 train_data['DESTINATION'] = dest
 
+# get day of week and hour 
+
+#for test_data
+day_of_week_list = []
+hour_list = []
+
+for i in range(test_data.shape[0]):
+    ts = test_data['TIMESTAMP'][i]
+    ts = datetime.utcfromtimestamp(ts)
+    actual_datetime_for_datestamp = ts.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    day_of_week_list.append(actual_datetime_for_datestamp.weekday())
+    hour_list.append(actual_datetime_for_datestamp.hour)
+
+test_data['dayofweek'] = day_of_week_list
+test_data['hour'] = hour_list
+
+#for train_data
+day_of_week_list = []
+hour_list = []
+
+for i in range(train_data[0].count()):
+    ts = train_data['TIMESTAMP'][i]
+    readable = datetime.datetime.fromtimestamp(ts) #convert to string time
+    ts = pd.Timestamp(readable) #convert to pandas timestamp object
+    day_of_week_list.append(ts.dayofweek)
+    hour_list.append(ts.hour)
+
+train_data['dayofweek'] = day_of_week_list
+train_data['hour'] = hour_list
+
+#get harversine distance function
+
+#for test
+
+dist_list = []
+
+for i in range(test_data.shape[0]):
+    row = ast.literal_eval(test_data['POLYLINE'][i])
+    cum_dist = 0
+    temp = []
+    for j in range(len(row)-1):
+        curr_lon = row[j][0]
+        curr_lat = row[j][1]
+        next_lon = row[j+1][0]
+        next_lat = row[j+1][1]
+        
+        har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
+        cum_dist += har_dist_travelled
+        
+    dist_list.append(cum_dist)
+
+test_data['cum_dist'] = dist_list
+
+#for train 
+dist_list = []
+
+for i in range(train_data[0].count():
+    row = ast.literal_eval(train_data['POLYLINE'][i])
+    cum_dist = 0
+    temp = []
+    for j in range(len(row)-1):
+        curr_lon = row[j][0]
+        curr_lat = row[j][1]
+        next_lon = row[j+1][0]
+        next_lat = row[j+1][1]
+        
+        har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
+        cum_dist += har_dist_travelled
+        
+    dist_list.append(cum_dist)
+
+train_data['cum_dist'] = dist_list
+
 for index, row in train_data.iterrows():
     if(row['MISSING_DATA']== True):
         train_data.drop(index, inplace = True)
     
-train_data.to_csv('datasets/train with duration origin etc v4.csv')
+train_data.to_csv('datasets/train_modified.csv')
+test_data.to_csv('datasets/test_modified.csv')
 
-for index, row in train_data.iterrows():
-    if(row['DURATION']== "NULL"):
-        train_data.drop(index, inplace = True)
+# for index, row in train_data.iterrows():
+#     if(row['DURATION']== "NULL"):
+#         train_data.drop(index, inplace = True)
