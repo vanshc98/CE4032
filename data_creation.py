@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
-test_data = pd.read_csv('datasets/test.csv')
+test_data = pd.read_csv('datasets/train.csv')
 train_data = pd.read_csv('datasets/test.csv')
 
 #train_data.head()
