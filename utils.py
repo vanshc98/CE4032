@@ -1,4 +1,5 @@
 import math
+import pandas as pd
 
 def calHarDist(lat1, lon1, lat2, lon2):  # generally used geo measurement function
     R = 6378.137 # Radius of earth in KM
