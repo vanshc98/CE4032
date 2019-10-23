@@ -10,8 +10,8 @@ from tqdm import tqdm
 
 MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
-test_data = pd.read_csv('datasets/train.csv')
-train_data = pd.read_csv('datasets/test.csv')
+test_data = pd.read_csv('datasets/test.csv')
+train_data = pd.read_csv('datasets/train.csv')
 
 #train_data.head()
 #train_data.groupby('MISSING_DATA').count()
@@ -86,6 +86,7 @@ for index, row in test_data.iterrows():
     counter+=1
     if(counter%500==0):
         print(counter/1710670)
+
 test_data['ACTUAL_DAYTYPE'] = actual_day_type
 
 #for train data
@@ -170,7 +171,7 @@ dest = []
 for i in range(train_data.shape[0]):
     try:
         polyline = train_data['POLYLINE'][i]
-        if(polyline==[]):
+        if(polyline == '[]'):
             origin.append("NULL")
             dest.append("NULL")
             trip_duration.append("NULL")
@@ -197,6 +198,9 @@ train_data['DESTINATION'] = dest
 train_data['END_TIME'] = end_time
 
 train_data = train_data.dropna(subset=['ORIGIN'])
+for index, row in train_data.iterrows():
+    if(row['ORIGIN']== "NULL"):
+        train_data.drop(index, inplace = True)
 train_data = train_data.reset_index(drop=True)
 
 train_data['ORIGIN'] = train_data['ORIGIN'].str.replace(r']', '')
@@ -251,10 +255,8 @@ for i in range(test_data.shape[0]):
         curr_lat = row[j][1]
         next_lon = row[j+1][0]
         next_lat = row[j+1][1]
-
         har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
         cum_dist += har_dist_travelled
-
     dist_list.append(cum_dist)
 
 test_data['cum_dist'] = dist_list
@@ -276,10 +278,6 @@ for i in range(train_data.shape[0]):
     dist_list.append(cum_dist)
 
 train_data['cum_dist'] = dist_list
-
-for index, row in train_data.iterrows():
-    if(row['MISSING_DATA']== True):
-        train_data.drop(index, inplace = True)
 
 ## Splitting origin and destination for lat and lng columns
 # For Test Data
