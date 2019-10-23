@@ -323,6 +323,30 @@ train_data['ORIGIN_LAT'] = oy
 train_data['DEST_LNG'] = dx
 train_data['DEST_LAT'] = dy
 
+# Calculating city centre
+X_coord = []
+Y_coord = []
+Z_coord = []
+for index, row in tqdm(train_data.iterrows()):
+    lat1 = ast.literal_eval(row['DESTINATION'])[0]
+    lon1 = ast.literal_eval(row['DESTINATION'])[1]
+    lat1 = lat1*(math.pi)/180
+    lon1 = lon1*(math.pi)/180
+    X = math.cos(lat1)*math.cos(lon1)
+    Y = math.cos(lat1)*math.sin(lon1)
+    Z = math.sin(lat1)
+    X_coord.append(X)
+    Y_coord.append(Y)
+    Z_coord.append(Z)
+x = np.median(X_coord)
+y = np.median(Y_coord)
+z = np.median(Z_coord)
+Lon = math.atan2(y,x)
+hyp = math.sqrt(x*x + y*y)
+Lat = math.atan2(z,hyp)
+Lat_city_center = Lat*180./(math.pi)
+Lon_city_center = Lon*180./(math.pi)
+
 print("Adding One-hot Encoding")
 
 # for test data
