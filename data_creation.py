@@ -6,6 +6,7 @@ import ast
 import matplotlib.pyplot as plt
 from utils import calHarDist, one_hot
 
+MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
 test_data = pd.read_csv('datasets/test.csv')
 train_data = pd.read_csv('datasets/train.csv')
@@ -346,6 +347,24 @@ hyp = math.sqrt(x*x + y*y)
 Lat = math.atan2(z,hyp)
 Lat_city_center = Lat*180./(math.pi)
 Lon_city_center = Lon*180./(math.pi)
+
+# n_sample
+def process_row_training(X, row):
+    pln = ast.literal_eval(row['POLYLINE'])
+    if len(pln)>3:
+        n_samples = MAX_SAMPLES_PER_TRIP
+        for i in range(n_samples):
+            idx = np.random.randint(len(pln)-1) + 1
+            if idx < 4:
+                continue
+            # calc features
+            data = [row['TRIP_ID'], row['CALL_TYPE'], row['ORIGIN_CALL'], row['TAXI_ID'], row['TIMESTAMP'], row['DAY_TYPE']]
+            data += [idx]
+            X.append(data)
+    return X
+X = []
+for i in range(train_data.shape[0]):
+    X = process_row_training(X, train_data.iloc[i])
 
 print("Adding One-hot Encoding")
 
