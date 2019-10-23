@@ -135,9 +135,9 @@ for i in range(test_data.shape[0]):
             end_time.append("NULL")
         else:
             poly_arr = polyline.split('],[')
-            dur = len(poly_arr)
+            dur = 15 * (len(poly_arr) - 1)
             trip_duration.append(dur)
-            endtime = train_data['TIMESTAMP'][i] + (dur * 15)
+            endtime = test_data['TIMESTAMP'][i] + dur
             end_time.append(endtime)
             origin.append(poly_arr[0][2:])
             dest.append(poly_arr[-1][:-2])
@@ -177,9 +177,9 @@ for i in range(train_data.shape[0]):
             end_time.append("NULL")
         else:
             poly_arr = polyline.split('],[')
-            dur = len(poly_arr)
+            dur = 15 * (len(poly_arr) - 1)
             trip_duration.append(dur)
-            endtime = train_data['TIMESTAMP'][i] + (dur * 15)
+            endtime = train_data['TIMESTAMP'][i] + dur
             end_time.append(endtime)
             origin.append(poly_arr[0][2:])
             dest.append(poly_arr[-1][:-2])
