@@ -31,8 +31,6 @@ train_data.groupby("hour").DURATION.median().plot.bar()
 show()
 
 #DAY VS DURATION
-train_data.groupby("dayofweek").DURATION.plot.kde()
-show()
 fig, ax = plt.subplots()
 day_of_week_grp = train_data.groupby('dayofweek')
 monday = day_of_week_grp.get_group(0)
@@ -53,11 +51,6 @@ df = pd.DataFrame({
     'Sunday': sunday['DURATION']
 })
 
-kdea = scipy.stats.gaussian_kde(monday['DURATION'])
-print(vars(kdea))
-
-ax.plot(monday['DURATION'], kdea, color="crimson", lw=2, label = "pdf")
-monday['DURATION'].plot.kde().set(xlim=(0, 200))
 df.plot.kde().set(xlim=(0, 200))
 
 show()
