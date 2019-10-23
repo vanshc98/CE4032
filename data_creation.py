@@ -4,12 +4,14 @@ from datetime import datetime
 import pytz
 import ast
 import matplotlib.pyplot as plt
-from utils import calHarDist, one_hot
+from utils import calHarDist, one_hot, heading, CC_LAT, CC_LON
+import math
+from tqdm import tqdm
 
 MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
-test_data = pd.read_csv('datasets/test.csv')
-train_data = pd.read_csv('datasets/train.csv')
+test_data = pd.read_csv('datasets/train.csv')
+train_data = pd.read_csv('datasets/test.csv')
 
 #train_data.head()
 #train_data.groupby('MISSING_DATA').count()
@@ -200,7 +202,6 @@ train_data = train_data.reset_index(drop=True)
 train_data['ORIGIN'] = train_data['ORIGIN'].str.replace(r']', '')
 train_data['DESTINATION'] = train_data['DESTINATION'].str.replace(r'[', '')
 
-
 # get day of week and hour
 
 print("Adding day of week and hour")
@@ -304,6 +305,16 @@ test_data['ORIGIN_LAT'] = oy
 test_data['DEST_LNG'] = dx
 test_data['DEST_LAT'] = dy
 
+origin_header = []
+origin_distance_to_cc = []
+for i in range(test_data.shape[0]):
+    origin_lat = float(test_data['ORIGIN_LAT'][i])
+    origin_lng = float(test_data['ORIGIN_LNG'][i])
+    origin_header.append(heading((origin_lat, origin_lng), (CC_LAT, CC_LON)))
+    origin_distance_to_cc.append(calHarDist(origin_lat, origin_lng, CC_LAT, CC_LON))
+
+test_data['ORIGIN_HEADER'] = origin_header
+test_data['ORIGIN_DISTANCE_TO_CC'] = origin_distance_to_cc
 # For Train Data
 
 ox = []
@@ -324,7 +335,7 @@ train_data['ORIGIN_LAT'] = oy
 train_data['DEST_LNG'] = dx
 train_data['DEST_LAT'] = dy
 
-# Calculating city centre
+# # Calculating city centre
 X_coord = []
 Y_coord = []
 Z_coord = []
@@ -348,6 +359,16 @@ Lat = math.atan2(z,hyp)
 Lat_city_center = Lat*180./(math.pi)
 Lon_city_center = Lon*180./(math.pi)
 
+origin_header = []
+origin_distance_to_cc = []
+for i in range(train_data.shape[0]):
+    origin_lat = float(train_data['ORIGIN_LAT'][i])
+    origin_lng = float(train_data['ORIGIN_LNG'][i])
+    origin_header.append(heading((origin_lat, origin_lng), (CC_LAT, CC_LON)))
+    origin_distance_to_cc.append(calHarDist(origin_lat, origin_lng, CC_LAT, CC_LON))
+
+train_data['ORIGIN_HEADER'] = origin_header
+train_data['ORIGIN_DISTANCE_TO_CC'] = origin_distance_to_cc
 # n_sample
 def process_row_training(X, row):
     pln = ast.literal_eval(row['POLYLINE'])
@@ -383,3 +404,4 @@ train_data = train_data.join(one_hot_day_type)
 print("Writing dataframe to CSV")
 
 train_data.to_csv('datasets/train_latest.csv', index=False)
+test_data.to_csv('datasets/test_latest.csv', index=False)
