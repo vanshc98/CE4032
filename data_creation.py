@@ -7,7 +7,11 @@ import matplotlib.pyplot as plt
 from utils import calHarDist, one_hot, heading, CC_LAT, CC_LON
 import math
 from tqdm import tqdm
+import time
 
+starttime = time.time()
+
+print("Reading Test and Train Data")
 MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
 test_data = pd.read_csv('datasets/test.csv')
@@ -63,7 +67,7 @@ print("Adding actual day type")
 
 #for test data
 actual_day_type = []
-counter = 0
+# counter = 0
 for index, row in test_data.iterrows():
     taxi_datetime= row['DATE']
     taxi_datetime = taxi_datetime.replace(tzinfo=None)
@@ -83,9 +87,9 @@ for index, row in test_data.iterrows():
         elif(delta.days<=-2):
             break
     actual_day_type.append(actual_day_type_value)
-    counter+=1
-    if(counter%500==0):
-        print(counter/1710670)
+    # counter+=1
+    # if(counter%500==0):
+    #     print(counter/1710670)
 
 test_data['ACTUAL_DAYTYPE'] = actual_day_type
 
@@ -129,7 +133,7 @@ dest = []
 for i in range(test_data.shape[0]):
     try:
         polyline = test_data['POLYLINE'][i]
-        if(polyline==[]):
+        if(polyline=='[]'):
             origin.append("NULL")
             dest.append("NULL")
             trip_duration.append("NULL")
@@ -156,6 +160,9 @@ test_data['DESTINATION'] = dest
 test_data['END_TIME'] = end_time
 
 test_data = test_data.dropna(subset=['ORIGIN'])
+for index, row in test_data.iterrows():
+    if(row['ORIGIN']== "NULL"):
+        test_data.drop(index, inplace = True)
 test_data = test_data.reset_index(drop=True)
 
 test_data['ORIGIN'] = test_data['ORIGIN'].str.replace(r']', '')
@@ -168,7 +175,7 @@ end_time = []
 origin = []
 dest = []
 
-for i in range(train_data.shape[0]):
+for i in tqdm(range(train_data.shape[0])):
     try:
         polyline = train_data['POLYLINE'][i]
         if(polyline == '[]'):
@@ -198,7 +205,7 @@ train_data['DESTINATION'] = dest
 train_data['END_TIME'] = end_time
 
 train_data = train_data.dropna(subset=['ORIGIN'])
-for index, row in train_data.iterrows():
+for index, row in tqdm(train_data.iterrows()):
     if(row['ORIGIN']== "NULL"):
         train_data.drop(index, inplace = True)
 train_data = train_data.reset_index(drop=True)
@@ -367,6 +374,7 @@ for i in range(train_data.shape[0]):
 
 train_data['ORIGIN_HEADER'] = origin_header
 train_data['ORIGIN_DISTANCE_TO_CC'] = origin_distance_to_cc
+
 # n_sample
 def process_row_training(X, row):
     pln = ast.literal_eval(row['POLYLINE'])
@@ -403,3 +411,5 @@ print("Writing dataframe to CSV")
 
 train_data.to_csv('datasets/train_latest.csv', index=False)
 test_data.to_csv('datasets/test_latest.csv', index=False)
+
+print("Completed in %s s" %(time.time()-starttime))
