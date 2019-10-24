@@ -387,7 +387,7 @@ def process_row_training(X, row):
             # calc features
             data = [row['TRIP_ID'], row['ORIGIN_CALL'], row['ORIGIN_STAND'], row['TAXI_ID'], row['TIMESTAMP'], row['DATE'], row['END_TIME'], row['dayofweek'], row['hour'], row['cum_dist'], row['ORIGIN_LNG'], row['ORIGIN_LAT'], row['DEST_LNG'], row['DEST_LAT'], row['ORIGIN_HEADER'], row['ORIGIN_DISTANCE_TO_CC']]
             data += [idx, pln[idx][1], pln[idx][0], calHarDist(pln[idx][1], pln[idx][0], CC_LAT, CC_LON), heading([CC_LAT, CC_LON], pln[idx])]
-            data += [row['CALL_TYPE_A'], row['CALL_TYPE_B'], row['CALL_TYPE_C'], row['ACTUAL_DAYTYPE_A'], row['ACTUAL_DAYTYPE_B'], row['ACTUAL_DAYTYPE_C']]
+            data += [row['CALL_TYPE_A'], row['CALL_TYPE_B'], row['CALL_TYPE_C'], row['ACTUAL_DAYTYPE_A'], row['ACTUAL_DAYTYPE_B'], row['ACTUAL_DAYTYPE_C'], row['DURATION']]
             X.append(data)
     return X
 X = []
