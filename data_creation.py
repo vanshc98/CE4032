@@ -7,11 +7,15 @@ import matplotlib.pyplot as plt
 from utils import calHarDist, one_hot, heading, CC_LAT, CC_LON
 import math
 from tqdm import tqdm
+import time
 
+starttime = time.time()
+
+print("Reading Test and Train Data")
 MAX_SAMPLES_PER_TRIP = 3
 local_tz = pytz.timezone('Portugal')
-test_data = pd.read_csv('datasets/train.csv')
-train_data = pd.read_csv('datasets/test.csv')
+test_data = pd.read_csv('datasets/test.csv')
+train_data = pd.read_csv('datasets/train.csv')
 
 #train_data.head()
 #train_data.groupby('MISSING_DATA').count()
@@ -63,7 +67,7 @@ print("Adding actual day type")
 
 #for test data
 actual_day_type = []
-counter = 0
+# counter = 0
 for index, row in test_data.iterrows():
     taxi_datetime= row['DATE']
     taxi_datetime = taxi_datetime.replace(tzinfo=None)
@@ -83,9 +87,10 @@ for index, row in test_data.iterrows():
         elif(delta.days<=-2):
             break
     actual_day_type.append(actual_day_type_value)
-    counter+=1
-    if(counter%500==0):
-        print(counter/1710670)
+    # counter+=1
+    # if(counter%500==0):
+    #     print(counter/1710670)
+
 test_data['ACTUAL_DAYTYPE'] = actual_day_type
 
 #for train data
@@ -128,16 +133,16 @@ dest = []
 for i in range(test_data.shape[0]):
     try:
         polyline = test_data['POLYLINE'][i]
-        if(polyline==[]):
+        if(polyline=='[]'):
             origin.append("NULL")
             dest.append("NULL")
             trip_duration.append("NULL")
             end_time.append("NULL")
         else:
             poly_arr = polyline.split('],[')
-            dur = len(poly_arr)
+            dur = 15 * (len(poly_arr) - 1)
             trip_duration.append(dur)
-            endtime = train_data['TIMESTAMP'][i] + (dur * 15)
+            endtime = test_data['TIMESTAMP'][i] + dur
             end_time.append(endtime)
             origin.append(poly_arr[0][2:])
             dest.append(poly_arr[-1][:-2])
@@ -155,6 +160,9 @@ test_data['DESTINATION'] = dest
 test_data['END_TIME'] = end_time
 
 test_data = test_data.dropna(subset=['ORIGIN'])
+for index, row in test_data.iterrows():
+    if(row['ORIGIN']== "NULL"):
+        test_data.drop(index, inplace = True)
 test_data = test_data.reset_index(drop=True)
 
 test_data['ORIGIN'] = test_data['ORIGIN'].str.replace(r']', '')
@@ -167,19 +175,19 @@ end_time = []
 origin = []
 dest = []
 
-for i in range(train_data.shape[0]):
+for i in tqdm(range(train_data.shape[0])):
     try:
         polyline = train_data['POLYLINE'][i]
-        if(polyline==[]):
+        if(polyline == '[]'):
             origin.append("NULL")
             dest.append("NULL")
             trip_duration.append("NULL")
             end_time.append("NULL")
         else:
             poly_arr = polyline.split('],[')
-            dur = len(poly_arr)
+            dur = 15 * (len(poly_arr) - 1)
             trip_duration.append(dur)
-            endtime = train_data['TIMESTAMP'][i] + (dur * 15)
+            endtime = train_data['TIMESTAMP'][i] + dur
             end_time.append(endtime)
             origin.append(poly_arr[0][2:])
             dest.append(poly_arr[-1][:-2])
@@ -197,6 +205,9 @@ train_data['DESTINATION'] = dest
 train_data['END_TIME'] = end_time
 
 train_data = train_data.dropna(subset=['ORIGIN'])
+for index, row in tqdm(train_data.iterrows()):
+    if(row['ORIGIN']== "NULL"):
+        train_data.drop(index, inplace = True)
 train_data = train_data.reset_index(drop=True)
 
 train_data['ORIGIN'] = train_data['ORIGIN'].str.replace(r']', '')
@@ -251,10 +262,8 @@ for i in range(test_data.shape[0]):
         curr_lat = row[j][1]
         next_lon = row[j+1][0]
         next_lat = row[j+1][1]
-
         har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
         cum_dist += har_dist_travelled
-
     dist_list.append(cum_dist)
 
 test_data['cum_dist'] = dist_list
@@ -276,10 +285,6 @@ for i in range(train_data.shape[0]):
     dist_list.append(cum_dist)
 
 train_data['cum_dist'] = dist_list
-
-for index, row in train_data.iterrows():
-    if(row['MISSING_DATA']== True):
-        train_data.drop(index, inplace = True)
 
 ## Splitting origin and destination for lat and lng columns
 # For Test Data
@@ -369,6 +374,7 @@ for i in range(train_data.shape[0]):
 
 train_data['ORIGIN_HEADER'] = origin_header
 train_data['ORIGIN_DISTANCE_TO_CC'] = origin_distance_to_cc
+
 # n_sample
 def process_row_training(X, row):
     pln = ast.literal_eval(row['POLYLINE'])
@@ -379,8 +385,9 @@ def process_row_training(X, row):
             if idx < 4:
                 continue
             # calc features
-            data = [row['TRIP_ID'], row['CALL_TYPE'], row['ORIGIN_CALL'], row['TAXI_ID'], row['TIMESTAMP'], row['DAY_TYPE']]
-            data += [idx]
+            data = [row['TRIP_ID'], row['ORIGIN_CALL'], row['ORIGIN_STAND'], row['TAXI_ID'], row['TIMESTAMP'], row['DATE'], row['END_TIME'], row['dayofweek'], row['hour'], row['cum_dist'], row['ORIGIN_LNG'], row['ORIGIN_LAT'], row['DEST_LNG'], row['DEST_LAT'], row['ORIGIN_HEADER'], row['ORIGIN_DISTANCE_TO_CC']]
+            data += [idx, pln[idx][1], pln[idx][0], calHarDist(pln[idx][1], pln[idx][0], CC_LAT, CC_LON), heading([CC_LAT, CC_LON], pln[idx])]
+            data += [row['CALL_TYPE_A'], row['CALL_TYPE_B'], row['CALL_TYPE_C'], row['ACTUAL_DAYTYPE_A'], row['ACTUAL_DAYTYPE_B'], row['ACTUAL_DAYTYPE_C'], row['DURATION']]
             X.append(data)
     return X
 X = []
@@ -405,3 +412,5 @@ print("Writing dataframe to CSV")
 
 train_data.to_csv('datasets/train_latest.csv', index=False)
 test_data.to_csv('datasets/test_latest.csv', index=False)
+
+print("Completed in %s s" %(time.time()-starttime))
