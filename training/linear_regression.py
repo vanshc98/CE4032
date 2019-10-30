@@ -15,7 +15,7 @@ for filename in ['train_modified_v2.csv']:
     df = pd.read_csv(os.path.join(DATA_DIR, filename))
     y = df['DURATION']
     df['displacement'] = df.apply(lambda row : calHarDist(row['ORIGIN_LAT'], row['ORIGIN_LNG'], row['DEST_LAT'], row['DEST_LNG']), axis = 1)
-    df.drop(['TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT', 'CALL_TYPE_A',	'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C'], axis=1, inplace=True)
+    df.drop(['TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT'], axis=1, inplace=True)
     values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
     df = df.fillna(value=values)
     
@@ -36,7 +36,7 @@ for filename in ['train_modified_v2.csv']:
     df = pd.read_csv(os.path.join(DATA_DIR, filename.replace('train', 'test')))
     
     ids = df['TRIP_ID']
-    df.drop(['Unnamed: 0', 'TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C'], axis=1, inplace=True)
+    df.drop(['Unnamed: 0', 'TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT'], axis=1, inplace=True)
     values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
     df = df.fillna(value=values)
     X_tst = np.array(df, dtype=np.float)
