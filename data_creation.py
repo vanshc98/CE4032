@@ -8,6 +8,7 @@ from utils import calHarDist, one_hot, heading, CC_LAT, CC_LON
 import math
 from tqdm import tqdm
 import time
+import statistics
 
 starttime = time.time()
 
@@ -252,11 +253,14 @@ train_data['hour'] = hour_list
 print("Adding cumulative distance")
 
 dist_list = []
+median_velocity = []
+final_velocity = []
 
 for i in range(test_data.shape[0]):
     row = ast.literal_eval(test_data['POLYLINE'][i])
     cum_dist = 0
     temp = []
+    temp_velocity = []
     for j in range(len(row)-1):
         curr_lon = row[j][0]
         curr_lat = row[j][1]
@@ -264,17 +268,29 @@ for i in range(test_data.shape[0]):
         next_lat = row[j+1][1]
         har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
         cum_dist += har_dist_travelled
+        temp_velocity.append(har_dist_travelled / 15)
     dist_list.append(cum_dist)
+    if len(temp_velocity) != 0:
+        median_velocity.append(statistics.median(temp_velocity))
+        final_velocity.append(temp_velocity[-1])
+    else:
+        median_velocity.append(0)
+        final_velocity.append(0)
 
 test_data['cum_dist'] = dist_list
+test_data['median_velocity'] = median_velocity
+test_data['final_velocity'] = final_velocity
 
 #for train
 dist_list = []
+median_velocity = []
+final_velocity = []
 
 for i in range(train_data.shape[0]):
     row = ast.literal_eval(train_data['POLYLINE'][i])
     cum_dist = 0
     temp = []
+    temp_velocity = []
     for j in range(len(row)-1):
         curr_lon = row[j][0]
         curr_lat = row[j][1]
@@ -282,9 +298,18 @@ for i in range(train_data.shape[0]):
         next_lat = row[j+1][1]
         har_dist_travelled = calHarDist(curr_lat,curr_lon,next_lat,next_lon)
         cum_dist += har_dist_travelled
+        temp_velocity.append(har_dist_travelled / 15)
     dist_list.append(cum_dist)
+    if len(temp_velocity) != 0:
+        median_velocity.append(statistics.median(temp_velocity))
+        final_velocity.append(temp_velocity[-1])
+    else:
+        median_velocity.append(0)
+        final_velocity.append(0)
 
 train_data['cum_dist'] = dist_list
+train_data['median_velocity'] = median_velocity
+train_data['final_velocity'] = final_velocity
 
 ## Splitting origin and destination for lat and lng columns
 # For Test Data
@@ -390,9 +415,9 @@ def process_row_training(X, row):
             data += [row['CALL_TYPE_A'], row['CALL_TYPE_B'], row['CALL_TYPE_C'], row['ACTUAL_DAYTYPE_A'], row['ACTUAL_DAYTYPE_B'], row['ACTUAL_DAYTYPE_C'], row['DURATION']]
             X.append(data)
     return X
-X = []
-for i in range(train_data.shape[0]):
-    X = process_row_training(X, train_data.iloc[i])
+# X = []
+# for i in range(train_data.shape[0]):
+#     X = process_row_training(X, train_data.iloc[i])
 
 print("Adding One-hot Encoding")
 
