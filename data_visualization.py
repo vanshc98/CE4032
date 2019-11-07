@@ -5,6 +5,7 @@ import numpy as np
 import seaborn as sns
 import scipy.stats
 
+labels = ['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 sns.set_style("white")
 
 train_data = pd.read_csv('datasets/train_interim_6.csv')
@@ -76,3 +77,42 @@ ax = df2.plot(kind='line', marker = 'o', linestyle = '--', figsize=(14,8), title
 ax.set_xlabel('Hour of the day')
 ax.set_ylabel('Number of pickups')
 ax.plot()
+
+# Median Velocity v/s time of the day
+ax1 = train_data.groupby("hour").MEDIAN_VELOCITY.median().plot.bar(figsize=(14,8), title = 'Median Velocity v/s Time of the Day')
+ax1.set_ylabel('Median Velocity')
+ax1.set_xlabel('Hour')
+show()
+
+# Cumulative Distance v/s time of the day
+ax2 = train_data.groupby("hour").CUM_DIST.median().plot.bar(figsize=(14,8), title = 'Distance Travelled v/s Time of the Day')
+ax2.set_ylabel('Distance Travelled')
+ax2.set_xlabel('Hour')
+show()
+
+# Duration v/s time of the day
+ax3 = train_data.groupby("hour").DURATION.median().plot.bar(figsize=(14,8), title = 'Duration v/s Time of the Day')
+ax3.set_ylabel('Duration')
+ax3.set_xlabel('Hour')
+show()
+
+# Median Velocoty v/s day of the week
+ax1 = train_data.groupby("dayofweek").MEDIAN_VELOCITY.median().plot.line(marker = 'o', title = 'Median Velocity vs Day of the Week')
+ax1.set_xlabel('Day of the week')
+ax1.set_ylabel('Median Velocity')
+ax1.set_xticklabels(labels, rotation = 90)
+show()
+
+# Cumulative Distance v/s day of the week
+ax2 = train_data.groupby("dayofweek").CUM_DIST.median().plot.line(marker = 'o')
+ax2.set_xlabel('Day of the week')
+ax2.set_ylabel('Distance Travelled')
+ax2.set_xticklabels(labels, rotation = 90)
+show()
+
+# Duration v/s day of the week
+ax3 = train_data.groupby("dayofweek").DURATION.median().plot.line(marker = 'o')
+ax3.set_xlabel('Day of the week')
+ax3.set_ylabel('Time Travelled')
+ax3.set_xticklabels(labels, rotation = 90)
+show()
