@@ -277,9 +277,9 @@ for i in range(test_data.shape[0]):
         median_velocity.append(0)
         final_velocity.append(0)
 
-test_data['cum_dist'] = dist_list
-test_data['median_velocity'] = median_velocity
-test_data['final_velocity'] = final_velocity
+test_data['CUM_DIST'] = dist_list
+test_data['MEDIAN_VELOCITY'] = median_velocity
+test_data['FINAL_VELOCITY'] = final_velocity
 
 #for train
 dist_list = []
@@ -307,9 +307,9 @@ for i in range(train_data.shape[0]):
         median_velocity.append(0)
         final_velocity.append(0)
 
-train_data['cum_dist'] = dist_list
-train_data['median_velocity'] = median_velocity
-train_data['final_velocity'] = final_velocity
+train_data['CUM_DIST'] = dist_list
+train_data['MEDIAN_VELOCITY'] = median_velocity
+train_data['FINAL_VELOCITY'] = final_velocity
 
 ## Splitting origin and destination for lat and lng columns
 # For Test Data
@@ -317,6 +317,7 @@ train_data['final_velocity'] = final_velocity
 print("Getting Origin and Destination Lat Lng Coordinates")
 
 # for test data
+
 ox = []
 oy = []
 dx = []
@@ -409,15 +410,14 @@ def process_row_training(X, row):
             idx = np.random.randint(len(pln)-1) + 1
             if idx < 4:
                 continue
-            # calc features
-            data = [row['TRIP_ID'], row['ORIGIN_CALL'], row['ORIGIN_STAND'], row['TAXI_ID'], row['TIMESTAMP'], row['DATE'], row['END_TIME'], row['dayofweek'], row['hour'], row['cum_dist'], row['ORIGIN_LNG'], row['ORIGIN_LAT'], row['DEST_LNG'], row['DEST_LAT'], row['ORIGIN_HEADER'], row['ORIGIN_DISTANCE_TO_CC']]
+            data = [row['TRIP_ID'], row['ORIGIN_CALL'], row['ORIGIN_STAND'], row['TAXI_ID'], row['TIMESTAMP'], row['DATE'], row['END_TIME'], row['dayofweek'], row['hour'], row['CUM_DIST'], row['ORIGIN_LNG'], row['ORIGIN_LAT'], row['DEST_LNG'], row['DEST_LAT'], row['ORIGIN_HEADER'], row['ORIGIN_DISTANCE_TO_CC'], row['MEDIAN_VELOCITY'], row['FINAL_VELOCITY']]
             data += [idx, pln[idx][1], pln[idx][0], calHarDist(pln[idx][1], pln[idx][0], CC_LAT, CC_LON), heading([CC_LAT, CC_LON], pln[idx])]
             data += [row['CALL_TYPE_A'], row['CALL_TYPE_B'], row['CALL_TYPE_C'], row['ACTUAL_DAYTYPE_A'], row['ACTUAL_DAYTYPE_B'], row['ACTUAL_DAYTYPE_C'], row['DURATION']]
             X.append(data)
     return X
-# X = []
-# for i in range(train_data.shape[0]):
-#     X = process_row_training(X, train_data.iloc[i])
+X = []
+for i in range(train_data.shape[0]):
+    X = process_row_training(X, train_data.iloc[i])
 
 print("Adding One-hot Encoding")
 
@@ -433,9 +433,34 @@ one_hot_day_type  = one_hot(train_data,1)
 train_data = train_data.join(one_hot_call_type)
 train_data = train_data.join(one_hot_day_type)
 
+print("Adding origin to cutoff angles")
+#For Train
+angles = []
+train_data
+for i in range(new_test.shape[0]):
+    temp_ang = angle(train_data['ORIGIN_LNG'][i],train_data['ORIGIN_LAT'][i],train_data['CUT_OFF_LNG'][i],train_data['CUT_OFF_LAT'][i])
+    if math.isnan(temp_ang):
+        temp_ang = 0.0
+    angles.append(temp_ang)
+
+train_data['ORIGIN_ANGLE_TO_CUTOFF'] = angles
+naarr = train_data.index[train_data['ORIGIN_ANGLE_TO_CUTOFF'].isna()].tolist()
+for i in temp:
+    train_data['ORIGIN_ANGLE_TO_CUTOFF'][i] = 0.0
+
 print("Writing dataframe to CSV")
 
 train_data.to_csv('datasets/train_latest.csv', index=False)
 test_data.to_csv('datasets/test_latest.csv', index=False)
+
+modified_train = pd.DataFrame.from_records(X)
+modified_train.columns = ['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'DEST_LNG', 'DEST_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']
+modified_train['DURATION'] = (modified_train['DURATION'] - 1) * 15
+
+modified_test = test_data[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'DEST_LNG', 'DEST_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
+
+modified_train.to_csv('datasets/modified_train.csv', index=False)
+modified_test.to_csv('datasets/modified_test.csv', index=False)
+
 
 print("Completed in %s s" %(time.time()-starttime))
