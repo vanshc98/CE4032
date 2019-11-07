@@ -55,7 +55,24 @@ df.plot.kde().set(xlim=(0, 200))
 
 show()
 
-train_data['hour'].value_counts().plot(kind='bar',
-                                   figsize=(14,8))
+# To plot number of pickups for different times of the day
+ax = train_data['hour'].value_counts(sort = False).plot(kind='line', marker = 'o', color = 'b', title = 'Number of Pick-ups vs Hours of the day',
+                                                  figsize=(14,8))
+ax.set_xlabel('Hour of the Day')
+ax.set_ylabel('Number of Pick-ups')
+ax.plot()
 
-show()
+# To plot number of pickups on different days and different times of the day
+df2 = pd.DataFrame({
+    'Monday': monday['hour'].value_counts(sort = False),
+    'Tuesday': tuesday['hour'].value_counts(sort = False),
+    'Wednesday': wednesday['hour'].value_counts(sort = False),
+    'Thursday': thursday['hour'].value_counts(sort = False),
+    'Friday': friday['hour'].value_counts(sort = False),
+    'Saturday': saturday['hour'].value_counts(sort = False),
+    'Sunday': sunday['hour'].value_counts(sort = False)
+})
+ax = df2.plot(kind='line', marker = 'o', linestyle = '--', figsize=(14,8), title = 'Hours of the day (Days of the week) vs Pick-ups')
+ax.set_xlabel('Hour of the day')
+ax.set_ylabel('Number of pickups')
+ax.plot()
