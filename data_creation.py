@@ -392,6 +392,40 @@ test_data['CUT_OFF_LAT'] = test_data['DEST_LAT']
 
 #modified_test = test_data[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'DAY_OF_WEEK', 'HOUR', 'ORIGIN_LNG', 'ORIGIN_LAT', 'DEST_LNG', 'DEST_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
 
+print("Generating header from origin to cutoff")
+# for train
+origin_cutoff_header = []
+origin_distance_to_cutoff = []
+
+for i in range(modified_train.shape[0]):
+    origin_lat = float(modified_train['ORIGIN_LAT'][i])
+    origin_lng = float(modified_train['ORIGIN_LNG'][i])
+    cutoff_lat = float(modified_train['CUT_OFF_LAT'][i])
+    cutoff_lng = float(modified_train['CUT_OFF_LNG'][i])
+    origin_cutoff_header.append(heading((origin_lat, origin_lng),(cutoff_lat, cutoff_lng)))
+    origin_distance_to_cutoff.append(calHarDist(origin_lat, origin_lng, cutoff_lat, cutoff_lng))
+
+modified_train['HEADER_ORIGIN_TO_CUT_OFF'] = origin_cutoff_header
+modified_train['CUT_OFF_DIST_FROM_ORIGIN'] = origin_distance_to_cutoff
+
+
+# for test
+origin_cutoff_header = []
+origin_distance_to_cutoff = []
+
+for i in range(test_data.shape[0]):
+    origin_lat = float(test_data['ORIGIN_LAT'][i])
+    origin_lng = float(test_data['ORIGIN_LNG'][i])
+    cutoff_lat = float(test_data['CUT_OFF_LAT'][i])
+    cutoff_lng = float(test_data['CUT_OFF_LNG'][i])
+    origin_cutoff_header.append(heading((origin_lat, origin_lng),(cutoff_lat, cutoff_lng)))
+    origin_distance_to_cutoff.append(calHarDist(origin_lat, origin_lng, cutoff_lat, cutoff_lng))
+
+test_data['HEADER_ORIGIN_TO_CUT_OFF'] = origin_cutoff_header
+test_data['CUT_OFF_DIST_FROM_ORIGIN'] = origin_distance_to_cutoff
+
+
+
 print("Merging Polyline")
 #for train
 poly_train = pd.DataFrame()
@@ -465,26 +499,11 @@ modified_train['FINAL_VELOCITY'] = final_velocity
 print("Dropping redundant rows and parsing results")
 # for test
 modified_test = test_data.drop(columns = ['POLYLINE','DEST_LNG','DEST_LAT'])
-modified_test = modified_test[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'DAY_OF_WEEK', 'HOUR', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CUM_DIST', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C']]
+modified_test = modified_test[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'DAY_OF_WEEK', 'HOUR', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CUT_OFF_DIST_FROM_ORIGIN', 'HEADER_ORIGIN_TO_CUT_OFF', 'CUM_DIST', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C']]
 
 # for train
 modified_train = modified_train.drop(columns = ['POLYLINE','DEST_LNG','DEST_LAT'])
-modified_train = modified_train[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'DAY_OF_WEEK', 'HOUR', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CUM_DIST', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
-
-print("Adding origin to cutoff angles")
-#For Train
-angles = []
-train_data
-for i in range(new_test.shape[0]):
-    temp_ang = angle(train_data['ORIGIN_LNG'][i],train_data['ORIGIN_LAT'][i],train_data['CUT_OFF_LNG'][i],train_data['CUT_OFF_LAT'][i])
-    if math.isnan(temp_ang):
-        temp_ang = 0.0
-    angles.append(temp_ang)
-
-train_data['ORIGIN_ANGLE_TO_CUTOFF'] = angles
-naarr = train_data.index[train_data['ORIGIN_ANGLE_TO_CUTOFF'].isna()].tolist()
-for i in temp:
-    train_data['ORIGIN_ANGLE_TO_CUTOFF'][i] = 0.0
+modified_train = modified_train[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'DAY_OF_WEEK', 'HOUR', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CUT_OFF_DIST_FROM_ORIGIN', 'HEADER_ORIGIN_TO_CUT_OFF', 'CUM_DIST', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
 
 print("Writing dataframe to CSV")
 
