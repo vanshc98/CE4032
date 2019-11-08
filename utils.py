@@ -33,9 +33,3 @@ def heading(p1, p2):
     aa = np.sin(lon2 - lon1) * np.cos(lat2)
     bb = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(lon2 - lon1)
     return np.arctan2(aa, bb)
-
-def angle(o_lng, o_lat, c_lng, c_lat):
-    lng = c_lng - o_lng
-    lat = c_lat - o_lat
-    ang = math.atan(lng/lat)
-    return ang
