@@ -32,6 +32,4 @@ def heading(p1, p2):
     lat2, lon2 = p2[0], p2[1]
     aa = np.sin(lon2 - lon1) * np.cos(lat2)
     bb = np.cos(lat1) * np.sin(lat2) - np.sin(lat1) * np.cos(lat2) * np.cos(lon2 - lon1)
-    # print(aa)
-    # print(bb)
     return np.arctan2(aa, bb)
