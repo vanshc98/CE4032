@@ -23,10 +23,6 @@ ax.set_xlabel('Taxi ID')
 ax.set_ylabel('Duration')
 show()
 
-# # HOUR VS DURATION
-train_data.groupby("HOUR").DURATION.median().plot.bar()
-show()
-
 # #DAY VS DURATION
 fig, ax = plt.subplots()
 day_of_week_grp = train_data.groupby('DAY_OF_WEEK')
