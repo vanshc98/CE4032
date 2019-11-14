@@ -5,6 +5,6 @@ pytz
 scipy
 seaborn
 sklearn
-tensorflow
+tensorflow==1.4.0
 tqdm
 folium
