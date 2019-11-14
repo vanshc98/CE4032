@@ -17,8 +17,8 @@ from sklearn.model_selection import ShuffleSplit, KFold
 # train = pd.read_csv("C:/Users/swl3guest/CE4032/datasets/train_modified_v2.csv")
 # test = pd.read_csv("C:/Users/swl3guest/CE4032/datasets/test_modified_v2.csv")
 
-train_df = pd.read_csv("../datasets/modified_train_v3.csv")
-test_df = pd.read_csv("../datasets/modified_test_v3.csv")
+train_df = pd.read_csv("../datasets/modified_train.csv")
+test_df = pd.read_csv("../datasets/modified_test.csv")
 ids = test_df['TRIP_ID']
 train_df.head()
 

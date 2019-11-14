@@ -8,7 +8,7 @@ import scipy.stats
 labels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 sns.set_style("white")
 
-train_data = pd.read_csv('datasets/modified_train_v3.csv')
+train_data = pd.read_csv('datasets/modified_train.csv')
 
 # ORIGIN_STAND VS DURATION
 train_data["ORIGIN_STAND"] = train_data["ORIGIN_STAND"].apply(lambda x: x if not np.isnan(x) else -1)

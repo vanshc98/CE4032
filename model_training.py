@@ -103,12 +103,12 @@ def ffn4(x, hidden_units1, hidden_units2):
   return logits, weights3
 
 #initialization of datasets
-train = pd.read_csv('datasets/modified_train_v2.csv')
+train = pd.read_csv('datasets/modified_train.csv')
 train_y = pd.DataFrame()
 train_y['TRAVEL_TIME'] = train['DURATION']
 train = train.drop(columns = ['DURATION','DATE','END_TIME','ORIGIN_CALL','ORIGIN_STAND','TRIP_ID'])
 
-test = pd.read_csv('datasets/modified_test_v2.csv')
+test = pd.read_csv('datasets/modified_test.csv')
 submission = pd.DataFrame()
 submission['TRIP_ID'] = test['TRIP_ID']
 test = test.drop(columns = ['DATE','END_TIME','ORIGIN_CALL','ORIGIN_STAND','TRIP_ID'])

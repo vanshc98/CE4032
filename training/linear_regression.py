@@ -10,10 +10,9 @@ from utils import calHarDist
            
 DATA_DIR = '../datasets'
 
-for filename in ['modified_train_v3.csv']:
+for filename in ['modified_train.csv']:
     print('reading training data from %s ...' % filename)
     df = pd.read_csv(os.path.join(DATA_DIR, filename))
-    df.drop(['TRIP_ID'], axis=1, inplace=True)
     c = df.corr().abs()
     print(c)
     y = df['DURATION']
