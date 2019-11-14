@@ -17,7 +17,6 @@ for filename in ['modified_train_v3.csv']:
     c = df.corr().abs()
     print(c)
     y = df['DURATION']
-<<<<<<< HEAD
     # df['displacement'] = df.apply(lambda row : calHarDist(row['ORIGIN_LAT'], row['ORIGIN_LNG'], row['CUT_OFF_LAT'], row['CUT_OFF_LNG']), axis = 1)
     df.drop(['TRIP_ID','TIMESTAMP','DATE', 'END_TIME', 'ORIGIN_CALL', 'ORIGIN_STAND', 'DURATION'], axis=1, inplace=True)
     # values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
@@ -30,20 +29,6 @@ for filename in ['modified_train_v3.csv']:
     # df.drop(['displacement'], axis=1, inplace=True)
     # X = df.loc[relevant_rows]
     # y = y.loc[relevant_rows]
-=======
-    df['displacement'] = df.apply(lambda row : calHarDist(row['ORIGIN_LAT'], row['ORIGIN_LNG'], row['DEST_LAT'], row['DEST_LNG']), axis = 1)
-    df.drop(['END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT'], axis=1, inplace=True)
-    values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
-    df = df.fillna(value=values)
-    
-    
-    X = np.array(df, dtype=np.float)
-    th1 = np.percentile(df['displacement'], [99.9])[0]
-    relevant_rows = (df['displacement'] < th1)
-    # df.drop(['displacement'], axis=1, inplace=True)
-    X = df.loc[relevant_rows]
-    y = np.log(y.loc[relevant_rows])
->>>>>>> b0c57ef4d1b28a5c4bdd9ef435265bc3a129a135
     t0 = time.time()
     reg = LinearRegression().fit(X, y)
     print(reg.score(X, y))

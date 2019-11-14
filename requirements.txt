@@ -1,0 +1,9 @@
+numpy
+pandas
+pyparsing
+pytz
+scipy
+seaborn
+sklearn
+tensorflow
+tqdm
