@@ -511,10 +511,10 @@ modified_train.to_csv('datasets/modified_train.csv', index=False)
 modified_test.to_csv('datasets/modified_test.csv', index=False)
 
 modified_train = pd.DataFrame.from_records(X)
-modified_train.columns = ['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'DEST_LNG', 'DEST_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']
+modified_train.columns = ['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']
 modified_train['DURATION'] = (modified_train['DURATION'] - 1) * 15
 
-modified_test = test_data[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'END_TIME', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'DEST_LNG', 'DEST_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
+modified_test = test_data[['TRIP_ID', 'ORIGIN_CALL', 'ORIGIN_STAND', 'TAXI_ID', 'TIMESTAMP', 'DATE', 'dayofweek', 'hour', 'CUM_DIST', 'ORIGIN_LNG', 'ORIGIN_LAT', 'ORIGIN_HEADER', 'ORIGIN_DISTANCE_TO_CC', 'MEDIAN_VELOCITY', 'FINAL_VELOCITY', 'CUT_OFF_LENGTH', 'CUT_OFF_LAT', 'CUT_OFF_LNG', 'CUT_OFF_DIST_FROM_CC', 'HEADER_CUT_OFF_TO_CC', 'CALL_TYPE_A', 'CALL_TYPE_B', 'CALL_TYPE_C', 'ACTUAL_DAYTYPE_A', 'ACTUAL_DAYTYPE_B', 'ACTUAL_DAYTYPE_C', 'DURATION']]
 
 modified_train.to_csv('datasets/modified_train.csv', index=False)
 modified_test.to_csv('datasets/modified_test.csv', index=False)
