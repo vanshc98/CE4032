@@ -10,22 +10,22 @@ from utils import calHarDist
            
 DATA_DIR = '../datasets'
 
-for filename in ['train_modified_v2.csv']:
+for filename in ['modified_train_v3.csv']:
     print('reading training data from %s ...' % filename)
     df = pd.read_csv(os.path.join(DATA_DIR, filename))
     y = df['DURATION']
-    df['displacement'] = df.apply(lambda row : calHarDist(row['ORIGIN_LAT'], row['ORIGIN_LNG'], row['DEST_LAT'], row['DEST_LNG']), axis = 1)
-    df.drop(['TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT'], axis=1, inplace=True)
-    values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
-    df = df.fillna(value=values)
+    # df['displacement'] = df.apply(lambda row : calHarDist(row['ORIGIN_LAT'], row['ORIGIN_LNG'], row['CUT_OFF_LAT'], row['CUT_OFF_LNG']), axis = 1)
+    df.drop(['TRIP_ID','TIMESTAMP','DATE', 'END_TIME', 'ORIGIN_CALL', 'ORIGIN_STAND', 'DURATION'], axis=1, inplace=True)
+    # values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
+    # df = df.fillna(value=values)
     
     
     X = np.array(df, dtype=np.float)
-    th1 = np.percentile(df['displacement'], [99.9])[0]
-    relevant_rows = (df['displacement'] < th1)
-    df.drop(['displacement'], axis=1, inplace=True)
-    X = df.loc[relevant_rows]
-    y = np.log(y.loc[relevant_rows])
+    # th1 = np.percentile(df['displacement'], [99.9])[0]
+    # relevant_rows = (df['displacement'] < th1)
+    # df.drop(['displacement'], axis=1, inplace=True)
+    # X = df.loc[relevant_rows]
+    # y = y.loc[relevant_rows]
     t0 = time.time()
     reg = LinearRegression().fit(X, y)
     print(reg.score(X, y))
@@ -36,13 +36,13 @@ for filename in ['train_modified_v2.csv']:
     df = pd.read_csv(os.path.join(DATA_DIR, filename.replace('train', 'test')))
     
     ids = df['TRIP_ID']
-    df.drop(['Unnamed: 0', 'TRIP_ID', 'END_TIME', 'TIMESTAMP', 'DATE', 'DURATION', 'DEST_LNG', 'DEST_LAT'], axis=1, inplace=True)
-    values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
-    df = df.fillna(value=values)
+    df.drop(['TRIP_ID','TIMESTAMP','DATE', 'END_TIME', 'ORIGIN_CALL', 'ORIGIN_STAND'], axis=1, inplace=True)
+    # values = {'ORIGIN_CALL': -1, 'ORIGIN_STAND': -1}
+    # df = df.fillna(value=values)
     X_tst = np.array(df, dtype=np.float)
-    y_pred = np.exp(reg.predict(X_tst))
+    y_pred = reg.predict(X_tst)
     
     submission = pd.DataFrame(ids, columns=['TRIP_ID'])
-    submission['TRAVEL_TIME'] = (y_pred - 1) * 15
+    submission['TRAVEL_TIME'] = y_pred
     submission.to_csv('../datasets/my_submission.csv', index=False)
 
