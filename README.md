@@ -20,3 +20,10 @@
 
 ### Installation Steps
 1. Once Python has been installed, input in _cmd_ : `python -m pip install -r requirements.txt`
+
+### Launch Project
+1. After installing the dependencies from the requirements, go to [ECML/PKDD 15: Taxi Trip Time Prediction (II)](https://www.kaggle.com/c/pkdd-15-taxi-trip-time-prediction-ii/data) and download the dataset.
+2. Place the downloaded dataset into the directory datasets/
+3. Run 'data_creation.py' with the command `python data_creation.py`. This will take about 4 hours to generate the dataset after feature engineering that will be used for training purposes and for visualization.
+4. Any python files are expected to be run standalone. This means that to run the python files you have to navigate to the relevant directory and run it. For example to run linear_regression.py you navigate to the training directory and run the following command `python linear_regression.py`
+5. To run the Jupyter notebooks you have to start the Jupyter notebook server first. Run the following command in the command line: `jupyter notebook` to start the Jupyter notebook server. Afterwards, proceed to navigate to the training directory from the browser and run the Jupyter notebooks.
