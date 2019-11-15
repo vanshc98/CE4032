@@ -4,7 +4,7 @@ import pandas as pd
 
 from folium.plugins import FastMarkerCluster
 
-train_data = pd.read_csv('../datasets/train_forvansh.csv')
+train_data = pd.read_csv('../datasets/Plot.csv')
 
 dummy2 = pd.DataFrame(train_data, columns=['ORIGIN_LAT', 'ORIGIN_LNG'])
 dummy2 = dummy2.values  ## convert to Numpy array
