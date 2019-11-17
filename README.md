@@ -63,18 +63,26 @@ CE4032
 ### Installation Steps
 1. Once Python has been installed, input in _cmd_ : `python -m pip install -r requirements.txt`
 
-## Launch Project From Scratch
-The following instructions related to datasets are if you want to run the project from scratch from the start. For project submission purposes, the dataset will be provided.
+## Data Cleaning and Feature Engineering
+The following instructions relates to the Data Cleaning and Feature Engineering portion of the project. Following the instructions below would replicate the steps taken by us to create the new dataset with engineered features from the initial dataset provided. The new dataset will be used in the next section `Model Training`.
 
 1. After installing the dependencies from the requirements, go to [ECML/PKDD 15: Taxi Trip Time Prediction (II)](https://www.kaggle.com/c/pkdd-15-taxi-trip-time-prediction-ii/data) and download the dataset.
-2. Place the downloaded dataset into the directory `datasets/`
-3. Run 'data_creation.py' with the command `python data_creation.py`. This will take about 4 hours to generate the dataset after feature engineering that will be used for training purposes and for visualization.
-4. Any python files are expected to be run standalone. This means that to run the python files you have to navigate to the relevant directory and run it. For example to run linear_regression.py you navigate to the training directory and run the following command `python linear_regression.py`
-5. To run the Jupyter notebooks you have to start the Jupyter notebook server first. Run the following command in the command line: `jupyter notebook` to start the Jupyter notebook server. Afterwards, proceed to navigate to the training directory from the browser and run the Jupyter notebooks.
+2. Place the downloaded dataset into the directory `datasets/`.
+3. Run 'data_creation.py' with the command `python data_creation.py`. This will take approximately 4 hours to generate the dataset after feature engineering that will be used for training purposes and for visualization.
+
+## Model Training
+This section describes the steps taken to replicate the scores that we have attained in the Kaggle tournament. Any python files are expected to be run as standalone. This means that to run the python files, you have to navigate to the relevant directory and then run it. 
+1. For example to run linear_regression.py you navigate to the training directory and run the following command `python linear_regression.py`
+2. To run the Jupyter notebooks, you have to start the Jupyter notebook server first. Run the following command in the command line: `jupyter notebook` to start the Jupyter notebook server. Afterwards, proceed to navigate to the training directory from the browser and run the Jupyter notebooks.
+
+## Achievement
+We have obtained a score of ` 0.56621` in the private leaderboards and `0.58727` in the public leaderboards. This puts us around the 28th place on the private leaderboards.
 
 ## Special Run Instructions
 For project submission purposes, the dataset will be provided.
 
 1. Before you run data_visualization.py, you should generally run data_creation_for_visualization.py first to create a new dataset.
 2. You should run end_points_plot.py to create new html files for map plotting purposes. The html files can then be displayed on the browser.
+
+
 
