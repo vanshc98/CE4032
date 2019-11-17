@@ -1,0 +1,23 @@
+.
+|____heatmap.py
+|____requirements.txt
+|____data_creation_for_visualization.py
+|____training
+| |____randomforest_and_gradient_boost.py
+| |____FinalXGBoost.ipynb
+| |____RandomForestAndGradientBoost.ipynb
+| |____linear_regression.py
+|____model_training.py
+|____pictures
+|____datasets
+|____README.md
+|____.vscode
+| |____settings.json
+|____data_visualization.py
+|____utils.py
+|____map_plotting
+| |____DestHeatMap.html
+| |____MarkerPlot.html
+| |____end_points_plot.py
+| |____OriginHeatMap.html
+|____data_creation.py

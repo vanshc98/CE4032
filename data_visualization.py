@@ -8,20 +8,34 @@ import scipy.stats
 labels = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 sns.set_style("white")
 
-train_data = pd.read_csv('datasets/modified_train.csv')
+train_data = pd.read_csv('datasets/modified_train_for_visualization.csv')
 
 # ORIGIN_STAND VS DURATION
 train_data["ORIGIN_STAND"] = train_data["ORIGIN_STAND"].apply(lambda x: x if not np.isnan(x) else -1)
-ax = train_data.groupby("ORIGIN_STAND").DURATION.median().plot.bar(figsize=(14,8), title = 'Duration v/s Origin Stand')
+ax = train_data.groupby("ORIGIN_STAND").DURATION.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Duration(s) v/s Origin Stand')
+ax.axis(xmin=-2)
 ax.set_xlabel('Origin Stand')
-ax.set_ylabel('Duration')
+ax.set_ylabel('Duration(s)')
 show()
 
 # # TAXI_ID VS DURATION
-ax = train_data.groupby("TAXI_ID").DURATION.median().plot.bar(figsize=(14,8), title = 'Duration v/s TaxiID')
+ax = train_data.groupby("TAXI_ID").DURATION.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Duration(s) v/s Taxi ID')
 ax.set_xlabel('Taxi ID')
-ax.set_ylabel('Duration')
+ax.set_ylabel('Duration(s)')
 show()
+
+# ACTUAL_DAYTYPE vs DURATION
+ax = train_data.groupby("ACTUAL_DAYTYPE").DURATION.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Duration(s) v/s Actual Day Type')
+ax.set_xlabel('Actual Day Type')
+ax.set_ylabel('Duration(s)')
+show()
+
+# CALL_TYPE VS DURATION
+ax = train_data.groupby("CALL_TYPE").DURATION.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Duration(s) v/s Call Type')
+ax.set_xlabel('Call Type')
+ax.set_ylabel('Duration(s)')
+show()
+
 
 # #DAY VS DURATION
 fig, ax = plt.subplots()
@@ -71,40 +85,44 @@ ax.set_ylabel('Number of pickups')
 show()
 
 # # Median Velocity v/s time of the day
-ax1 = train_data.groupby("HOUR").MEDIAN_VELOCITY.median().plot.bar(figsize=(14,8), title = 'Median Velocity v/s Time of the Day')
-ax1.set_ylabel('Median Velocity')
+ax1 = train_data.groupby("HOUR").MEDIAN_VELOCITY.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Median Velocity(m/s) v/s Time of the Day')
+ax1.set_ylabel('Median Velocity(m/s)')
 ax1.set_xlabel('Hour')
 show()
 
 # # Cumulative Distance v/s time of the day
-ax2 = train_data.groupby("HOUR").CUM_DIST.median().plot.bar(figsize=(14,8), title = 'Distance Travelled v/s Time of the Day')
-ax2.set_ylabel('Distance Travelled')
+ax2 = train_data.groupby("HOUR").CUM_DIST.median().plot.bar(figsize=(14,8), title = 'Distance Travelled(m) v/s Time of the Day')
+ax2.set_ylabel('Distance Travelled(m)')
+ax2.set_xlabel('Hour')
+show()
+ax2 = train_data.groupby("HOUR").CUM_DIST.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Distance Travelled(m) v/s Time of the Day')
+ax2.set_ylabel('Distance Travelled(m)')
 ax2.set_xlabel('Hour')
 show()
 
 # # Duration v/s time of the day
-ax3 = train_data.groupby("HOUR").DURATION.median().plot.bar(figsize=(14,8), title = 'Duration v/s Time of the Day')
-ax3.set_ylabel('Duration')
+ax3 = train_data.groupby("HOUR").DURATION.median().plot(kind='line', marker = 'o', color = 'b', figsize=(14,8), title = 'Duration(s) v/s Time of the Day')
+ax3.set_ylabel('Duration(s)')
 ax3.set_xlabel('Hour')
 show()
 
 # Median Velocoty v/s day of the week
-ax1 = train_data.groupby("DAY_OF_WEEK").MEDIAN_VELOCITY.median().plot.line(figsize=(14,8), marker = 'o', title = 'Median Velocity vs Day of the Week')
+ax1 = train_data.groupby("DAY_OF_WEEK").MEDIAN_VELOCITY.median().plot.line(figsize=(14,8), marker = 'o', title = 'Median Velocity(m/s) vs Day of the Week')
 ax1.set_xlabel('Day of the week')
-ax1.set_ylabel('Median Velocity')
+ax1.set_ylabel('Median Velocity(m/s)')
 ax1.set_xticklabels(labels, rotation = 45)
 show()
 
 # Cumulative Distance v/s day of the week
-ax2 = train_data.groupby("DAY_OF_WEEK").CUM_DIST.median().plot.line(figsize=(14,8), marker = 'o', title = "Distance Travelled vs Day of the Week")
+ax2 = train_data.groupby("DAY_OF_WEEK").CUM_DIST.median().plot.line(figsize=(14,8), marker = 'o', title = "Distance Travelled(m) vs Day of the Week")
 ax2.set_xlabel('Day of the week')
-ax2.set_ylabel('Distance Travelled')
+ax2.set_ylabel('Distance Travelled(m)')
 ax2.set_xticklabels(labels, rotation = 45)
 show()
 
 # Duration v/s day of the week
-ax3 = train_data.groupby("DAY_OF_WEEK").DURATION.median().plot.line(figsize=(14,8), marker = 'o', title = "Time Travelled vs Day of the Week")
+ax3 = train_data.groupby("DAY_OF_WEEK").DURATION.median().plot.line(figsize=(14,8), marker = 'o', title = "Time Travelled(s) vs Day of the Week")
 ax3.set_xlabel('Day of the week')
-ax3.set_ylabel('Time Travelled')
+ax3.set_ylabel('Time Travelled(s)')
 ax3.set_xticklabels(labels, rotation = 45)
 show()
