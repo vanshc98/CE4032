@@ -3,24 +3,43 @@
 ## File Tree Structure
 
 CE4032
+
 |____corr.py (Code used to generate correlation matrix)
+
 |____requirements.txt
+
 |____data_creation_for_visualization.py (Run this code before you run data_visualization.py. Used to create dataset for visualization)
+
 |____training (Directory that contains code to perform training)
+
 | |____randomforest_and_gradient_boost.py (Random forest and gradient boost training)
+
 | |____FinalXGBoost.ipynb (Xgboost training as jupyter notebook)
+
 | |____RandomForestAndGradientBoost.ipynb (Random forest and gradient boost training as jupyter notebook)
+
 | |____linear_regression.py (Linear regression training)
+
 |____model_training.py (Neural network training)
+
 |____pictures (Directory that contains pictures)
+
 |____datasets (Directory that should hold datasets)
+
 |____data_visualization.py (Code used to perform data visualization)
+
 |____utils.py (Code that contains useful methods for utility purposes)
+
 |____map_plotting (Directory that contains map plotting features)
+
 | |____DestHeatMap.html (Contains heat map of all the destination points)
+
 | |____MarkerPlot.html (Contains visualization that cluster origin points)
+
 | |____end_points_plot.py (Run this code to create new html files that contain using map plotting visualizations)
+
 | |____OriginHeatMap.html (Contains heat map of all the origin points)
+
 |____data_creation.py (Run this code before you run anything. Used to create dataset for training and some visualization purposes)
 
 ## Installing Dependencies
